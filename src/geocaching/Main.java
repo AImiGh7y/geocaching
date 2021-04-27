@@ -3,20 +3,16 @@ package geocaching;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.SequentialSearchST;
 import java.util.Scanner;
+import java.io.FileWriter;
 
 public class Main {
-    // - se se modificar, preciso atualizar o UML?
-    // - deixar estas duas variaveis no Main ou criar classe para os utilizadores e as caches
-    static SequentialSearchST<String, Utilizador> utilizadores = new SequentialSearchST<>();
-    static SequentialSearchST<Point2D, Cache> caches = new SequentialSearchST<>();
-
     public static Utilizador pedirUtilizador(Scanner scanner) {
         Utilizador utilizador = null;
         do {
             System.out.print("Quem vistou? ");
             String nome = scanner.next();
-            if (utilizadores.contains(nome))
-                utilizador = utilizadores.get(nome);
+            if (Utilizador.utilizadores.contains(nome))
+                utilizador = Utilizador.utilizadores.get(nome);
             else
                 System.out.println("Utilizador nao existe");
         } while (utilizador == null);
@@ -31,8 +27,8 @@ public class Main {
             System.out.print("Qual a longitude da cache? ");
             double lon = scanner.nextDouble();
             Point2D pt = new Point2D(lat, lon);
-            if (caches.contains(pt))
-                cache = caches.get(pt);
+            if (Cache.caches.contains(pt))
+                cache = Cache.caches.get(pt);
             else
                 System.out.println("Cache nao existe");
         } while (cache == null);
@@ -49,6 +45,8 @@ public class Main {
             System.out.println("3: adicionar cache");
             System.out.println("4: visitar caches");
             System.out.println("5: listar caches");
+            System.out.println("6: ler do ficheiro");
+            System.out.println("7: gravar para ficheiro");
             System.out.println("0: sair");
 
             System.out.println();
@@ -58,12 +56,12 @@ public class Main {
                 case 1: {  // adicionar utilizador
                     System.out.print("Qual o nome? ");
                     String nome = scanner.next();
-                    utilizadores.put(nome, new Utilizador(nome));
+                    Utilizador.utilizadores.put(nome, new Utilizador(nome));
                     break;
                 }
                 case 2: {  // listar utilizadores
                     System.out.println("Lista de utilizadores");
-                    for (String nome : utilizadores.keys())
+                    for (String nome : Utilizador.utilizadores.keys())
                         System.out.println("- " + nome);
                     System.out.println();
                     break;
@@ -74,7 +72,7 @@ public class Main {
                     lat = scanner.nextDouble();
                     System.out.print("Qual a longitude? ");
                     lon = scanner.nextDouble();
-                    caches.put(new Point2D(lat, lon), new Cache(lat, lon));
+                    Cache.caches.put(new Point2D(lat, lon), new Cache(lat, lon));
                     break;
                 }
                 case 4: {  // visitado por
@@ -89,10 +87,20 @@ public class Main {
                 }
                 case 5: {  // listar caches
                     System.out.println("Lista de caches");
-                    for (Point2D pt : caches.keys()) {
-                        String lista_utilizadores = caches.get(pt).listaUtilizadores();
+                    for (Point2D pt : Cache.caches.keys()) {
+                        String lista_utilizadores = Cache.caches.get(pt).listaUtilizadores();
                         System.out.println("- " + pt.x() + ", " + pt.y() + " - vistada por: " + lista_utilizadores);
                     }
+                    break;
+                }
+                case 6: {  // ler ficheiro
+                    Utilizador.readFile("utilizador.txt");
+                    Cache.readFile("cache.txt");
+                    break;
+                }
+                case 7: {  // gravar ficheiro
+                    Utilizador.writeFile("utilizador.txt");
+                    Cache.writeFile("cache.txt");
                     break;
                 }
             }
