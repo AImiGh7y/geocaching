@@ -9,6 +9,8 @@ public class Log {
         this.mensagem = mensagem;
     }
 
+    public Utilizador getUtilizador() { return utilizador; }
+
     public String getMensagem() {
         return mensagem;
     }

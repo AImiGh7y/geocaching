@@ -9,34 +9,49 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.SequentialSearchST;
 
 public class Cache {
     public static RedBlackBST<Point2D, Cache> caches = new RedBlackBST<>();
     public Point2D gps;
-    public RedBlackBST<String, Log> logs;
+    public SequentialSearchST<Utilizador, Log> logs;
     public ArrayList<Item> items;
 
     public Cache(double lat, double lon) {
         gps = new Point2D(lat, lon);
-        logs = new RedBlackBST<>();
+        logs = new SequentialSearchST<>();
         items = new ArrayList<Item>();
     }
 
+    /**
+     * Esta funcao espefici...
+     * @param utilizador Utilizador que visitou a cache
+     * @param mensagem Mensagem deixada pelo utiulizador
+     */
     public void visitadaPor(Utilizador utilizador, String mensagem) {
+        System.out.println("cache visitada por " + utilizador.getNome() + " - " + mensagem);
         Log log = new Log(utilizador, mensagem);
-        logs.put(utilizador.getNome(), log);
+        logs.put(utilizador, log);
         utilizador.addCacheVisitada(this);
     }
 
-    public String listaUtilizadores() {
-        String lista = "";
-        for(String nome: logs.keys())
-            lista += nome + " ";
-        return lista;
+    public void removerVisita(Utilizador utilizador) {
+        logs.delete(utilizador);
     }
 
-    public Log getLog(String nome) {
-        return null;
+    /**
+     * Retornar lista de logs.
+     * @return lista de logs
+     */
+    public ArrayList<Log> getLogs() {
+        // RedBlackBST<String, Log> logs => ArrayList<Log> ret
+        ArrayList<Log> ret = new ArrayList<>();
+        //for(Tipo elemento : lista)
+        for(Utilizador utilizador: logs.keys()){
+            Log log = logs.get(utilizador);
+            ret.add(log);
+        }
+        return ret;
     }
 
     public static void readFile(String ficheiro){
@@ -52,11 +67,11 @@ public class Cache {
                 Cache cache = new Cache(x, y);
 
                 // ler os logs na cache
-                System.out.println("ignora linha");
-                sc.nextLine();  // ignora linha
+                // ignorar linhas
+                sc.nextLine(); sc.nextLine();
                 while(true) {
                     String utilizador = sc.nextLine();
-                    System.out.println("leu utilizador");
+                    System.out.println("leu utilizador: " + utilizador);
                     if(utilizador.isEmpty())
                         break;
                     String mensagem = sc.nextLine();
@@ -106,7 +121,7 @@ public class Cache {
                 file.write(String.valueOf(cache.gps.x()) + "\n");
                 file.write(String.valueOf(cache.gps.y()) + "\n");
                 file.write("\n");
-                for(String utilizador: cache.logs.keys()) {
+                for(Utilizador utilizador: cache.logs.keys()) {
                     Log log = cache.logs.get(utilizador);
                     file.write(utilizador + "\n");
                     file.write(log.getMensagem() + "\n");
@@ -121,5 +136,18 @@ public class Cache {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        Cache cache1 = new Cache(0.5, 2.8);
+        Cache cache2 = new Cache(7.2, 3.2);
+        caches.put(cache1.gps, cache1);
+        caches.put(cache2.gps, cache2);
+        writeFile("temp.txt");
+        caches = new RedBlackBST<>();
+        readFile("temp.txt");
+        System.out.println("Test tamanho cache: " + caches.size() + " tem que ser 2");
+        System.out.println("Cache tem ponto 0.5,2.8: " + (caches.get(new Point2D(0.5, 2.8)) != null) + " tem que ser true");
+        System.out.println("Cache tem ponto 6.2,3.8: " + (caches.get(new Point2D(6.2, 3.8)) != null) + " tem que ser false");
     }
 }
