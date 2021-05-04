@@ -11,16 +11,24 @@ import java.util.Scanner;
 import edu.princeton.cs.algs4.*;
 import edu.princeton.cs.algs4.SequentialSearchST;
 
-public class Cache {
-    public static RedBlackBST<Point2D, Cache> caches = new RedBlackBST<>();
+public abstract class Cache {
+    public static RedBlackBST<Point2D, Cache> caches_por_gps = new RedBlackBST<>();
+    public static RedBlackBST<String, Cache> caches_por_regiao = new RedBlackBST<>();
+    String id, regiao;
     public Point2D gps;
-    public SequentialSearchST<Utilizador, Log> logs;
+    public SequentialSearchST<User, Log> logs;
     public ArrayList<Item> items;
 
-    public Cache(double lat, double lon) {
+    public Cache(String id, String regiao, double lat, double lon) {
+        this.id = id;
+        this.regiao = regiao;
         gps = new Point2D(lat, lon);
         logs = new SequentialSearchST<>();
         items = new ArrayList<Item>();
+    }
+
+    public void addItem(Item item) {
+        items.add(item);
     }
 
     /**
@@ -28,14 +36,14 @@ public class Cache {
      * @param utilizador Utilizador que visitou a cache
      * @param mensagem Mensagem deixada pelo utiulizador
      */
-    public void visitadaPor(Utilizador utilizador, String mensagem) {
+    public void visitadaPor(User utilizador, String mensagem) {
         System.out.println("cache visitada por " + utilizador.getNome() + " - " + mensagem);
         Log log = new Log(utilizador, mensagem);
         logs.put(utilizador, log);
         utilizador.addCacheVisitada(this);
     }
 
-    public void removerVisita(Utilizador utilizador) {
+    public void removerVisita(User utilizador) {
         logs.delete(utilizador);
     }
 
@@ -47,107 +55,30 @@ public class Cache {
         // RedBlackBST<String, Log> logs => ArrayList<Log> ret
         ArrayList<Log> ret = new ArrayList<>();
         //for(Tipo elemento : lista)
-        for(Utilizador utilizador: logs.keys()){
+        for(User utilizador: logs.keys()){
             Log log = logs.get(utilizador);
             ret.add(log);
         }
         return ret;
     }
 
-    public static void readFile(String ficheiro){
-        // caches
-        Scanner sc = null;
-        try {
-            sc = new Scanner(new File(ficheiro));
-            sc.useLocale(Locale.ENGLISH);
-            while (sc.hasNext()) {
-                System.out.println("ler gps");
-                double x = sc.nextDouble();
-                double y = sc.nextDouble();
-                Cache cache = new Cache(x, y);
-
-                // ler os logs na cache
-                // ignorar linhas
-                sc.nextLine(); sc.nextLine();
-                while(true) {
-                    String utilizador = sc.nextLine();
-                    System.out.println("leu utilizador: " + utilizador);
-                    if(utilizador.isEmpty())
-                        break;
-                    String mensagem = sc.nextLine();
-                    Utilizador u = Utilizador.utilizadores.get(utilizador);
-                    cache.visitadaPor(u, mensagem);
-                }
-
-                // ler os items na cache
-                while(true) {
-                    String descricao = sc.nextLine();
-                    System.out.println("descricao: " + descricao);
-                    if(descricao.isEmpty())
-                        break;
-                    cache.items.add(new Item(descricao));
-                }
-                System.out.println("acabou de ler cache");
-                caches.put(cache.gps, cache);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void writeFile(String ficheiro) {
-        // caches
-/*
-        10.6
-        8.5
-
-        utilizador1
-        mensagem1
-        utilizador2
-        mensagem2
-
-        descricao_item1
-        descricao_item2
-
-        11.7
-        1.2
-*/
-
-        try {
-            FileWriter file = new FileWriter(ficheiro);
-            for(Point2D pt: caches.keys()) {
-                Cache cache = caches.get(pt);
-                // String s = String.valueOf(5);
-                file.write(String.valueOf(cache.gps.x()) + "\n");
-                file.write(String.valueOf(cache.gps.y()) + "\n");
-                file.write("\n");
-                for(Utilizador utilizador: cache.logs.keys()) {
-                    Log log = cache.logs.get(utilizador);
-                    file.write(utilizador + "\n");
-                    file.write(log.getMensagem() + "\n");
-                }
-                file.write("\n");
-                for(Item item: cache.items){
-                    file.write(item.getDescricao() + "\n");
-                }
-                file.write("\n");
-            }
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public double getLat() { return gps.x(); }
+    public double getLon() { return gps.y(); }
+    public String getId() { return id; }
+    public String getRegiao() { return regiao; }
 
     public static void main(String[] args) {
-        Cache cache1 = new Cache(0.5, 2.8);
-        Cache cache2 = new Cache(7.2, 3.2);
-        caches.put(cache1.gps, cache1);
-        caches.put(cache2.gps, cache2);
+        Cache cache1 = new CacheBasic("cache1", "Norte", 0.5, 2.8);
+        Cache cache2 = new CachePremium("cache2", "Norte", 7.2, 3.2);
+        caches_por_gps.put(cache1.gps, cache1);
+        caches_por_gps.put(cache2.gps, cache2);
+        /*
         writeFile("temp.txt");
         caches = new RedBlackBST<>();
         readFile("temp.txt");
         System.out.println("Test tamanho cache: " + caches.size() + " tem que ser 2");
-        System.out.println("Cache tem ponto 0.5,2.8: " + (caches.get(new Point2D(0.5, 2.8)) != null) + " tem que ser true");
-        System.out.println("Cache tem ponto 6.2,3.8: " + (caches.get(new Point2D(6.2, 3.8)) != null) + " tem que ser false");
+         */
+        System.out.println("Cache tem ponto 0.5,2.8: " + (caches_por_gps.get(new Point2D(0.5, 2.8)) != null) + " tem que ser true");
+        System.out.println("Cache tem ponto 6.2,3.8: " + (caches_por_gps.get(new Point2D(6.2, 3.8)) != null) + " tem que ser false");
     }
 }

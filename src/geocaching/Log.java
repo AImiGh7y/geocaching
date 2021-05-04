@@ -1,15 +1,15 @@
 package geocaching;
 
 public class Log {
-    private Utilizador utilizador;
+    private User utilizador;
     private String mensagem;
 
-    public Log(Utilizador utilizador, String mensagem){
+    public Log(User utilizador, String mensagem){
         this.utilizador = utilizador;
         this.mensagem = mensagem;
     }
 
-    public Utilizador getUtilizador() { return utilizador; }
+    public User getUtilizador() { return utilizador; }
 
     public String getMensagem() {
         return mensagem;
