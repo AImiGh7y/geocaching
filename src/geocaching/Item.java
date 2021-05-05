@@ -10,4 +10,8 @@ public class Item {
     public String getDescricao() {
         return descricao;
     }
+
+    public String toString() {
+        return "item " + descricao;
+    }
 }

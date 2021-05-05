@@ -14,4 +14,8 @@ public class Log {
     public String getMensagem() {
         return mensagem;
     }
+
+    public String toString() {
+        return utilizador.getNome() + " - " + mensagem;
+    }
 }

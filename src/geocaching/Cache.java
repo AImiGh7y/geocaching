@@ -11,9 +11,14 @@ import java.util.Scanner;
 import edu.princeton.cs.algs4.*;
 import edu.princeton.cs.algs4.SequentialSearchST;
 
+/**
+ * Cache que guarda logs e items.
+ */
 public abstract class Cache {
-    public static RedBlackBST<Point2D, Cache> caches_por_gps = new RedBlackBST<>();
-    public static RedBlackBST<String, Cache> caches_por_regiao = new RedBlackBST<>();
+    public static RedBlackBST<String, Cache> caches_por_id = new RedBlackBST<>();
+    public static RedBlackBST<String, ArrayList<Cache>> caches_por_regiao = new RedBlackBST<>();
+    public SequentialSearchST<Cache, Integer> tempo_para_cache = new SequentialSearchST<>();
+    public SequentialSearchST<Cache, Double> distancia_para_cache = new SequentialSearchST<>();
     String id, regiao;
     public Point2D gps;
     public SequentialSearchST<User, Log> logs;
@@ -31,6 +36,10 @@ public abstract class Cache {
         items.add(item);
     }
 
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
+
     /**
      * Esta funcao espefici...
      * @param utilizador Utilizador que visitou a cache
@@ -41,6 +50,18 @@ public abstract class Cache {
         Log log = new Log(utilizador, mensagem);
         logs.put(utilizador, log);
         utilizador.addCacheVisitada(this);
+    }
+
+    /**
+     * Verifica se utilizador visitou a cache.
+     * @param user Utilizador que visitou cache.
+     * @return Se o utilizador visitou a cache.
+     */
+    public boolean foiVisitadaPor(User user) {
+        for(User u: logs.keys())
+            if(u == user)
+                return true;
+        return false;
     }
 
     public void removerVisita(User utilizador) {
@@ -62,23 +83,18 @@ public abstract class Cache {
         return ret;
     }
 
+    public ArrayList<Item> getItems() { return items; }
+
+    public TravelBug getTravelBug() {
+        for(Item item: items) {
+            if(item instanceof TravelBug)
+                return (TravelBug)item;
+        }
+        return null;
+    }
+
     public double getLat() { return gps.x(); }
     public double getLon() { return gps.y(); }
     public String getId() { return id; }
     public String getRegiao() { return regiao; }
-
-    public static void main(String[] args) {
-        Cache cache1 = new CacheBasic("cache1", "Norte", 0.5, 2.8);
-        Cache cache2 = new CachePremium("cache2", "Norte", 7.2, 3.2);
-        caches_por_gps.put(cache1.gps, cache1);
-        caches_por_gps.put(cache2.gps, cache2);
-        /*
-        writeFile("temp.txt");
-        caches = new RedBlackBST<>();
-        readFile("temp.txt");
-        System.out.println("Test tamanho cache: " + caches.size() + " tem que ser 2");
-         */
-        System.out.println("Cache tem ponto 0.5,2.8: " + (caches_por_gps.get(new Point2D(0.5, 2.8)) != null) + " tem que ser true");
-        System.out.println("Cache tem ponto 6.2,3.8: " + (caches_por_gps.get(new Point2D(6.2, 3.8)) != null) + " tem que ser false");
-    }
 }

@@ -16,6 +16,7 @@ public abstract class User {
     private int id;
     private String nome;
     private ArrayList<Cache> visitadas;
+    private TravelBug travelbug_atual;
 
     public User(int id, String nome) {
         this.id = id;
@@ -49,5 +50,13 @@ public abstract class User {
 
     public void setNome(String nome){
         this.nome = nome;
+    }
+
+    public TravelBug getTravelBug() {
+        return travelbug_atual;
+    }
+
+    public void setTravelBug(TravelBug bug) {
+        travelbug_atual = bug;
     }
 }
