@@ -1,8 +1,11 @@
 package geocaching;
 
 import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.RedBlackBST;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Main {
@@ -113,15 +116,170 @@ public class Main {
         do {
             System.out.println();
             System.out.println("== Menu Pesquisas ==");
-            System.out.println("1: Todas as caches visitadas por um utilizador. Global por região");
+            System.out.println("1: Todas as caches visitadas por um utilizador. Global e por região");
+            System.out.println("2: Todas as caches não visitadas por um utilizador. Global e por região");
+            System.out.println("3: Todos os utilizadores que já visitaram uma dada cache");
+            System.out.println("4: Todas as caches premium que têm pelo menos um objecto");
+            System.out.println("5: Top-5 de utilizadores que visitaram maior nº de caches num dado período temporal");
+            System.out.println("6: Travel bugs com maior número de localizações percorridas no seu histórico");
             System.out.println("0: Voltar atras");
             opcao = scanner.nextInt();
             switch(opcao) {
                 case 1: {  // Todas as caches visitadas por um utilizador
                     User utilizador = pedirUtilizador(scanner);
+                    int nvisitas = 0;
+                    // global
+                    System.out.println("* Visitadas globais:");
                     for(String id: Cache.caches_por_id.keys()) {
                         Cache cache = Cache.caches_por_id.get(id);
-                        if(cache.foiVisitadaPor(utilizador))
+                        if(cache.foiVisitadaPor(utilizador)) {
+                            System.out.println("- " + cache);
+                            nvisitas++;
+                        }
+                    }
+                    // por regiao
+                    if(nvisitas == 0)
+                        System.out.println("Nao ha caches visitadas");
+                    else {
+                        System.out.println("* Visitadas por regiao:");
+                        for(String regiao: Cache.caches_por_regiao.keys()) {
+                            System.out.println(regiao);
+                            ArrayList<Cache> caches = Cache.caches_por_regiao.get(regiao);
+                            for (Cache cache : caches) {
+                                if (cache.foiVisitadaPor(utilizador)) {
+                                    System.out.println("- " + cache);
+                                    nvisitas++;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 2: {  // Todas as caches visitadas por um utilizador
+                    User utilizador = pedirUtilizador(scanner);
+                    int nvisitas = 0;
+                    // global
+                    System.out.println("* Caches nao-visitadas globais:");
+                    for (String id : Cache.caches_por_id.keys()) {
+                        Cache cache = Cache.caches_por_id.get(id);
+                        if (!cache.foiVisitadaPor(utilizador)) {
+                            System.out.println("- " + cache);
+                            nvisitas++;
+                        }
+                    }
+                    // por regiao
+                    if (nvisitas == 0)
+                        System.out.println("Nao ha caches nao-visitadas");
+                    else {
+                        System.out.println("* Caches nao-visitadas por regiao:");
+                        for (String regiao : Cache.caches_por_regiao.keys()) {
+                            System.out.println(regiao);
+                            ArrayList<Cache> caches = Cache.caches_por_regiao.get(regiao);
+                            for (Cache cache : caches) {
+                                if (!cache.foiVisitadaPor(utilizador)) {
+                                    System.out.println("- " + cache);
+                                    nvisitas++;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 3: {  // Todas as caches visitadas por um utilizador
+                    Cache cache = pedirCache(scanner);
+                    int nutilizadores = 0;
+                    for(int id: User.utilizadores_por_id.keys()){
+                        User utilizador = User.utilizadores_por_id.get(id);
+                        if(cache.foiVisitadaPor(utilizador)){
+                            System.out.println(utilizador);
+                            nutilizadores++;
+                        }
+                    }
+                    if(nutilizadores == 0){
+                        System.out.println("Nenhum utilizador visitou a cache");
+                    }
+                    break;
+                }
+                case 4: {
+                    for(String id: Cache.caches_por_id.keys()){
+                        Cache cache = Cache.caches_por_id.get(id);
+                        if(cache instanceof CachePremium){
+                            if(cache.getItems().size() >= 1){
+                                System.out.println(cache + " tem " + cache.getItems().size() + " items");
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 5: {
+                    // pedir intervalo temporal (o dia)
+                    System.out.println("Qual o dia da visita?");
+                    int dia = scanner.nextInt();
+                    if(dia < 1 || dia > 31) {
+                        System.out.println("Dia invalido");
+                        continue;
+                    }
+                    // symbol table que associa nvisitas -> lista de utilizadores
+                    RedBlackBST<Integer, ArrayList<User>> visitas = new RedBlackBST<>();
+                    for(int user_id: User.utilizadores_por_id.keys()){
+                        // quantas caches, o utilizador visitou
+                        User user = User.utilizadores_por_id.get(user_id);
+                        int nvisitas = 0;
+                        for(String cache_id : Cache.caches_por_id.keys()){
+                            Cache cache = Cache.caches_por_id.get(cache_id);
+                            if(cache.foiVisitadaPor(user)){
+                                boolean visitou_tempo = false;
+                                for(Log log: cache.getLogs()) {
+                                    if (log.getDate().getDayOfMonth() == dia) {
+                                        visitou_tempo = true;
+                                        break;
+                                    }
+                                }
+                                if(visitou_tempo)
+                                    nvisitas++;
+                            }
+                        }
+                        // adicionar utilizador ao symbol table
+                        if(nvisitas > 0) {
+                            if (visitas.contains(nvisitas)) {
+                                visitas.get(nvisitas).add(user);
+                            } else {
+                                ArrayList<User> users = new ArrayList<>();
+                                users.add(user);
+                                visitas.put(nvisitas, users);
+                            }
+                        }
+                    }
+                    // imprimir top-5
+                    ArrayList<Integer> visitas_ordenadas = new ArrayList<>();
+                    for(Integer nvisitas: visitas.keys())
+                        visitas_ordenadas.add(0, nvisitas);
+                    int i = 0;
+                    for(Integer nvisitas: visitas_ordenadas) {
+                        for(User user: visitas.get(nvisitas)) {
+                            System.out.println(nvisitas + " de " + user);
+                            i++;
+                        }
+                        // mostrar apenas 5 maiores
+                        if(i >= 5)
+                            break;
+                    }
+                    break;
+                }
+                case 6: {
+                    int maior_historico = 0;
+                    TravelBug maior_bug = null;
+                    for(String id: Cache.caches_por_id.keys()) {
+                        Cache cache = Cache.caches_por_id.get(id);
+                        TravelBug bug = cache.getTravelBug();
+                        if(bug != null && bug.getHistorico().size() > maior_historico) {
+                            maior_historico = bug.getHistorico().size();
+                            maior_bug = bug;
+                        }
+                    }
+                    if(maior_bug != null) {
+                        System.out.println("Travel bug em mais localizacoes: " + maior_bug);
+                        for(Cache cache: maior_bug.getHistorico())
                             System.out.println("- " + cache);
                     }
                     break;
@@ -214,7 +372,7 @@ public class Main {
             System.out.println("1: menu utilizador");
             System.out.println("2: menu cache");
             System.out.println("3: visitar cache");
-            System.out.println("4: pesquisas");
+            System.out.println("4: menu pesquisas");
             System.out.println("8: ler do ficheiro");
             System.out.println("9: gravar para ficheiro");
             System.out.println("0: sair");
@@ -232,6 +390,12 @@ public class Main {
                 case 3: {  // visitado por
                     User utilizador = pedirUtilizador(scanner);
                     Cache cache = pedirCache(scanner);
+
+                    // "O Manuel sendo um Basic user, não devia ter acesso à geocache16."
+                    if(utilizador instanceof UserBasic && cache instanceof CachePremium) {
+                        System.out.println("Erro: " + utilizador.getNome() + " (utilizador basico) nao pode visitar uma cache premium");
+                        continue;
+                    }
 
                     System.out.println("Qual a mensagem que quer deixar?");
                     String mensagem = scanner.next();
@@ -254,6 +418,7 @@ public class Main {
                             cache.removeItem(bug_cache);
                         }
                         cache.addItem(bug_utilizador);
+                        bug_utilizador.setCache(cache);
                     }
                     break;
                 }

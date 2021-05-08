@@ -14,6 +14,10 @@ import java.util.Scanner;
  * Le e escreve dum ficheiro.
  */
 public class IO {
+    /**
+     * Carrega ficheiro.
+     * @param nome_ficheiro nome do ficheiro para ler
+     */
     public static void readFile(String nome_ficheiro){
         // user
         Scanner sc = null;
