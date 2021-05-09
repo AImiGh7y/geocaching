@@ -120,6 +120,10 @@ public class IO {
         }
     }
 
+    /**
+     * escreve para o ficheiro
+     * @param nome_ficheiro nome do ficheiro para escrever
+     */
     public static void writeFile(String nome_ficheiro){
         try {
             FileWriter file = new FileWriter(nome_ficheiro);

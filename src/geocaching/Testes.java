@@ -2,6 +2,9 @@ package geocaching;
 
 import java.util.ArrayList;
 
+/**
+ * teste das caches e visitas (as caches)
+ */
 public class Testes {
     public static void testarCache() {
         Cache cache1 = new CacheBasic("cache1", "Norte", 0.5, 2.8);
