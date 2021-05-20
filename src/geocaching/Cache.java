@@ -17,8 +17,8 @@ import edu.princeton.cs.algs4.SequentialSearchST;
 public abstract class Cache {
     public static RedBlackBST<String, Cache> caches_por_id = new RedBlackBST<>();
     public static RedBlackBST<String, ArrayList<Cache>> caches_por_regiao = new RedBlackBST<>();
-    public SequentialSearchST<Cache, Integer> tempo_para_cache = new SequentialSearchST<>();
-    public SequentialSearchST<Cache, Double> distancia_para_cache = new SequentialSearchST<>();
+    public static SymbolDigraphLP grafo_tempos = new SymbolDigraphLP();
+    public static SymbolDigraphLP grafo_distancias = new SymbolDigraphLP();
     String id, regiao;
     public Point2D gps;
     public SequentialSearchST<User, Log> logs;

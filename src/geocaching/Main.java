@@ -1,7 +1,6 @@
 package geocaching;
 
-import edu.princeton.cs.algs4.Point2D;
-import edu.princeton.cs.algs4.RedBlackBST;
+import edu.princeton.cs.algs4.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -299,6 +298,7 @@ public class Main {
             System.out.println("== Menu Cache ==");
             System.out.println("1: adicionar cache");
             System.out.println("2: listar caches");
+            System.out.println("3: caminho minimo");  // R14
             System.out.println("0: Voltar atras");
             opcao = scanner.nextInt();
             switch(opcao) {
@@ -353,6 +353,43 @@ public class Main {
                         }
                     }
                     break;
+                }
+                case 3: {  // caminho mais curto
+                    System.out.print("De que cache? ");
+                    String id1 = scanner.next();
+                    System.out.print("Para que cache? ");
+                    String id2 = scanner.next();
+                    if(Cache.caches_por_id.contains(id1) && Cache.caches_por_id.contains(id2)) {
+                        System.out.println("Qual o atributo a usar?");
+                        System.out.println("1: tempo");
+                        System.out.println("2: distancia");
+                        System.out.println("Outra tecla para sair");
+                        int opcao_grafo = scanner.nextInt();
+                        SymbolDigraphLP grafo = null;
+                        if(opcao_grafo == 1)
+                            grafo = Cache.grafo_tempos;
+                        else if(opcao_grafo == 2)
+                            grafo = Cache.grafo_distancias;
+                        if(grafo != null) {
+                            int i1 = grafo.indexOf(id1);
+                            int i2 = grafo.indexOf(id2);
+                            DijkstraSP dijkstra = new DijkstraSP(grafo.digraph(), i1);
+                            if(dijkstra.hasPathTo(i2)) {
+                                double custoMin = dijkstra.distTo(i2);
+                                System.out.println("Custo minimo = " + custoMin);
+                                System.out.print(id1);
+                                for(DirectedEdge e: dijkstra.pathTo(i2)) {
+                                    System.out.print(" -> " + grafo.nameOf(e.to()));
+                                }
+                                System.out.println();
+                            }
+                            else
+                                System.out.println("Erro: nao existe caminho entre os nos");
+                        }
+                    }
+                    else {
+                        System.out.println("Error: cache does not exist.");
+                    }
                 }
                 case 0:
                     break;

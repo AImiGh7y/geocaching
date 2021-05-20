@@ -1,5 +1,6 @@
 package geocaching;
 
+import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.Point2D;
 
 import java.io.File;
@@ -90,10 +91,8 @@ public class IO {
                 int tempo = Integer.valueOf(campos[3]);
                 Cache c1 = Cache.caches_por_id.get(cache1);
                 Cache c2 = Cache.caches_por_id.get(cache2);
-                c1.distancia_para_cache.put(c2, distancia);
-                //c2.distancia_para_cache.put(c1, distancia);
-                c1.tempo_para_cache.put(c2, tempo);
-                //c2.tempo_para_cache.put(c1, tempo);
+                Cache.grafo_distancias.addEdge(c1.getId(), c2.getId(), distancia);
+                Cache.grafo_tempos.addEdge(c1.getId(), c2.getId(), tempo);
             }
 
             // ler travel bugs
@@ -160,24 +159,15 @@ public class IO {
             }
 
             // distancias
-            int n = 0;
-            for(String id1: Cache.caches_por_id.keys()) {
-                Cache cache1 = Cache.caches_por_id.get(id1);
-                for(String id2: Cache.caches_por_id.keys()) {
-                    Cache cache2 = Cache.caches_por_id.get(id2);
-                    if(cache1.distancia_para_cache.contains(cache2))
-                        n += 1;
-                }
-            }
+
+
+            int n = Cache.grafo_distancias.getNedges();
             file.write(n + "\n");
-            for(String id1: Cache.caches_por_id.keys()) {
-                Cache cache1 = Cache.caches_por_id.get(id1);
-                for(String id2: Cache.caches_por_id.keys()) {
-                    Cache cache2 = Cache.caches_por_id.get(id2);
-                    if(cache1.distancia_para_cache.contains(cache2)) {
-                        file.write(id1 + ", " + id2 + ", " + cache1.distancia_para_cache.get(cache2) + ", " + cache1.tempo_para_cache.get(cache2) + "\n");
-                    }
-                }
+            for(int i = 0; i < Cache.grafo_distancias.getNvertices(); i++) {
+                for(DirectedEdge e: Cache.grafo_distancias.digraph().adj(i)) {
+                    String id1 = Cache.grafo_distancias.nameOf(e.from());
+                    String id2 = Cache.grafo_distancias.nameOf(e.to());
+                    file.write(id1 + ", " + id2 + ", " + e.weight() + ", " + ((int)Cache.grafo_tempos.getWeightBetween(id1, id2)) + "\n");                }
             }
 
             ArrayList<TravelBug> bugs = new ArrayList<>();
