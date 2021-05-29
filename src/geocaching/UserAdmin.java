@@ -14,4 +14,6 @@ public class UserAdmin extends User {
     public String toString() {
         return getNome() + " [admin]";
     }
+
+    public String getTipo() { return "admin"; }
 }

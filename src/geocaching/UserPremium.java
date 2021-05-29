@@ -12,4 +12,6 @@ public class UserPremium extends User {
     public String toString() {
         return getNome() + " [premium]";
     }
+
+    public String getTipo() { return "premium"; }
 }

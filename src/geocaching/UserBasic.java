@@ -12,4 +12,6 @@ public class UserBasic extends User {
     public String toString() {
         return getNome() + " [basic]";
     }
+
+    public String getTipo() { return "basic"; }
 }

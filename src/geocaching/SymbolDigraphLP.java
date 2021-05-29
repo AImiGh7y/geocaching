@@ -53,13 +53,13 @@ public class SymbolDigraphLP {
         graph = new EdgeWeightedDigraph(100);
     }
 
-    void addVertex(String s) {
+    public void addVertex(String s) {
         int i = st.size();
         st.put(s, i);
         keys[i] = s;
     }
 
-    void addEdge(String v1, String v2, double weight) {
+    public void addEdge(String v1, String v2, double weight) {
         if(!st.contains(v1))
             addVertex(v1);
         if(!st.contains(v2))
@@ -69,11 +69,11 @@ public class SymbolDigraphLP {
         graph.addEdge(new DirectedEdge(i1, i2, weight));
     }
 
-    int getNvertices() {
+    public int getNvertices() {
         return st.size();
     }
 
-    int getNedges() {
+    public int getNedges() {
         return graph.E();
     }
 

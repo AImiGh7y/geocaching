@@ -44,9 +44,13 @@ public abstract class User {
 
     public int getId() { return id; }
 
+    public String getIdstr() { return String.valueOf(id); }
+
     public String getNome() {
         return nome;
     }
+
+    public abstract String getTipo();
 
     public void setNome(String nome){
         this.nome = nome;

@@ -1,0 +1,84 @@
+6
+1, Manuel, basic
+2, Pedro, basic
+3, Fernando, admin
+4, Joana, basic
+5, Maria, premium
+6, Filomena, admin
+3
+centro, 5
+geocache8, basic, 40.2094433, -8.4208601, 2, canudo, capa
+geocache9, basic, 40.2027321, -8.4333746, 0
+geocache10, premium, 40.188891, -8.410378, 2, borracha, chaves
+geocache11, basic, 40.6394116, -8.6621375, 1, ovos_moles
+geocache12, basic, 40.6597787, -7.9136921, 2, espada, travelbug3
+norte, 7
+geocache1, basic, 41.1720859, -8.6148178, 3, canudo, livro, oculos
+geocache2, basic, 41.1605747, -8.5855818, 3, bola, brinquedo, camisola
+geocache3, basic, 41.1666825, -8.6751895, 3, pedra, flor, areia
+geocache4, basic, 41.158881, -8.6337921, 1, flauta
+geocache5, premium, 41.1492281, -8.6120275, 0
+geocache6, basic, 41.1504982, -8.6654695, 0
+geocache7, basic, 41.2421226, -8.6807401, 1, bilhetes_aviao
+sul, 6
+geocache13, basic, 38.6942546, -9.2129457, 0
+geocache14, basic, 38.7288464, -9.1481854, 0
+geocache15, basic, 38.7756417, -9.1325313, 2, bilhetes_aviao, travelbug1
+geocache16, premium, 38.7527152, -9.1869627, 0
+geocache17, basic, 38.7612341, -9.1639843, 1, travelbug2
+geocache18, basic, 38.9369329, -9.3290594, 0
+50
+geocache1, geocache7, 5.2, 66.0
+geocache1, geocache6, 3.2, 35.0
+geocache1, geocache5, 4.2, 40.0
+geocache1, geocache4, 6.2, 70.0
+geocache1, geocache3, 8.2, 102.0
+geocache1, geocache2, 5.2, 60.0
+geocache2, geocache7, 4.5, 51.0
+geocache2, geocache6, 5.4, 53.0
+geocache2, geocache5, 7.2, 72.0
+geocache2, geocache4, 5.8, 65.0
+geocache2, geocache3, 8.5, 102.0
+geocache3, geocache7, 8.5, 89.0
+geocache3, geocache6, 4.1, 43.0
+geocache3, geocache5, 3.2, 35.0
+geocache3, geocache4, 2.7, 30.0
+geocache4, geocache7, 7.4, 72.0
+geocache4, geocache6, 4.3, 49.0
+geocache4, geocache5, 3.7, 41.0
+geocache5, geocache7, 5.2, 53.0
+geocache5, geocache6, 7.4, 71.0
+geocache6, geocache7, 7.4, 73.0
+geocache7, geocache15, 330.0, 45.0
+geocache7, geocache8, 130.0, 1500.0
+geocache8, geocache12, 5.3, 55.0
+geocache8, geocache11, 3.4, 41.0
+geocache8, geocache10, 4.7, 51.0
+geocache8, geocache9, 7.2, 72.0
+geocache9, geocache12, 6.4, 71.0
+geocache9, geocache11, 1.7, 21.0
+geocache9, geocache10, 2.2, 24.0
+geocache10, geocache13, 6.2, 67.0
+geocache10, geocache12, 3.5, 36.0
+geocache10, geocache11, 4.7, 52.0
+geocache11, geocache12, 2.8, 32.0
+geocache12, geocache13, 197.0, 2460.0
+geocache13, geocache18, 2.8, 32.0
+geocache13, geocache17, 4.2, 51.0
+geocache13, geocache16, 3.8, 45.0
+geocache13, geocache15, 4.5, 51.0
+geocache13, geocache14, 2.6, 31.0
+geocache14, geocache18, 3.7, 41.0
+geocache14, geocache17, 5.2, 62.0
+geocache14, geocache16, 4.8, 58.0
+geocache14, geocache15, 3.3, 41.0
+geocache15, geocache18, 3.8, 43.0
+geocache15, geocache17, 5.3, 64.0
+geocache15, geocache16, 4.4, 53.0
+geocache16, geocache18, 2.1, 35.0
+geocache16, geocache17, 1.2, 22.0
+geocache17, geocache18, 3.8, 44.0
+3
+travelbug3, Filomena, geocache3, geocache12
+travelbug1, Maria, geocache1, geocache15
+travelbug2, Pedro, geocache2, geocache17

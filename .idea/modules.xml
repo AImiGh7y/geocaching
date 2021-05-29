@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/geocaching.iml" filepath="$PROJECT_DIR$/geocaching.iml" />
+      <module fileurl="file://$USER_HOME$/javafx-sdk-11.0.2/lib/lib.iml" filepath="$USER_HOME$/javafx-sdk-11.0.2/lib/lib.iml" />
     </modules>
   </component>
 </project>
