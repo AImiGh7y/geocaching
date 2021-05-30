@@ -34,6 +34,10 @@ public class Main {
         return cache;
     }
 
+    /**
+     * menu do utilizador (adicionar remover editar etc)
+     * @param scanner input para o menu
+     */
     public static void menuUtilizador(Scanner scanner) {
         int opcao;
         do {
@@ -110,6 +114,10 @@ public class Main {
         } while(opcao != 0);
     }
 
+    /**
+     * menu das pesquisas (sitios visitados, sitios mais visitados etc)
+     * @param scanner input para o menu
+     */
     public static void menuPesquisas(Scanner scanner) {
         int opcao;
         do {
@@ -291,6 +299,10 @@ public class Main {
         } while(opcao != 0);
     }
 
+    /**
+     * Menu das caches (adicionar remover listar etc)
+     * @param scanner input para o menu
+     */
     public static void menuCache(Scanner scanner) {
         int opcao;
         do {
@@ -400,6 +412,10 @@ public class Main {
         } while(opcao != 0);
     }
 
+    /**
+     * menu completo do programa (antes de mostrar os submenus)
+     * @param args
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int opcao;
