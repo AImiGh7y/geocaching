@@ -88,8 +88,17 @@
                                             <columns>
                                                 <TableColumn fx:id="cacheIdCol" prefWidth="75.0" text="Id" />
                                                 <TableColumn fx:id="cacheRegionCol" prefWidth="75.0" text="Regiao" />
+                                    <TableColumn fx:id="cacheLatCol" prefWidth="75.0" text="lat" />
+                                    <TableColumn fx:id="cacheLonCol" prefWidth="75.0" text="lon" />
                                             </columns>
                                         </TableView>
+                              <HBox prefHeight="0.0" prefWidth="154.0" spacing="8.0">
+                                 <children>
+                                    <TextField fx:id="cacheNameField" />
+                                    <Button mnemonicParsing="false" onAction="#onCacheAdd" text="Add" />
+                                    <Button mnemonicParsing="false" onAction="#onCacheRemove" text="Remove" />
+                                 </children>
+                              </HBox>
                                     </children>
                                 </VBox>
                             </children>

@@ -13,4 +13,6 @@ public class CacheBasic extends Cache {
     public String toString() {
         return getId() + " - " + getRegiao() + " - " + getLat() + "," + getLon() + " [basic]";
     }
+
 }
+

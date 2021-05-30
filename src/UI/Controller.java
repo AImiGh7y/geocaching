@@ -43,10 +43,20 @@ public class Controller {
     private TextField userNameField;
 
     @FXML
+    private TextField cacheNameField;
+
+    @FXML
     private TableColumn<Cache, String> cacheIdCol;
 
     @FXML
     private TableColumn<Cache, String> cacheRegionCol;
+
+
+    @FXML
+    private TableColumn<Cache, String> cacheLatCol;
+
+    @FXML
+    private TableColumn<Cache, String> cacheLonCol;
 
     @FXML
     public void initialize() {
@@ -66,6 +76,10 @@ public class Controller {
         cacheIdCol.setCellFactory(TextFieldTableCell.forTableColumn());
         cacheRegionCol.setCellValueFactory(new PropertyValueFactory<>("regiao"));
         cacheRegionCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        cacheLatCol.setCellValueFactory(new PropertyValueFactory<>("latstr"));
+        cacheLatCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        cacheLonCol.setCellValueFactory(new PropertyValueFactory<>("lonstr"));
+        cacheLonCol.setCellFactory(TextFieldTableCell.forTableColumn());
 
         // preencher
         updateGraphGroup();
@@ -154,5 +168,20 @@ public class Controller {
         }
 
         updateUsersTable();
+    }
+
+    @FXML
+    void onCacheAdd(ActionEvent event) {
+
+    }
+
+    @FXML
+    void onCacheRemove(ActionEvent event) {
+        Cache cache = cachesTable.getSelectionModel().getSelectedItem();
+
+        Cache.caches_por_regiao.delete(cache.getRegiao());
+        Cache.caches_por_id.delete(cache.getId());
+
+        updateCachesTable();
     }
 }
