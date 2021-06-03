@@ -95,6 +95,8 @@ public abstract class Cache {
 
     public double getLat() { return gps.x(); }
     public double getLon() { return gps.y(); }
+    public String getLatstr() { return String.valueOf(gps.x()); }
+    public String getLonstr() { return String.valueOf(gps.y()); }
     public String getId() { return id; }
     public String getRegiao() { return regiao; }
 }

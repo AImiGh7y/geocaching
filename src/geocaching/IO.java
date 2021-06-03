@@ -3,10 +3,7 @@ package geocaching;
 import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.Point2D;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
@@ -118,7 +115,6 @@ public class IO {
             e.printStackTrace();
         }
     }
-
     /**
      * escreve para o ficheiro
      * @param nome_ficheiro nome do ficheiro para escrever
@@ -159,8 +155,6 @@ public class IO {
             }
 
             // distancias
-
-
             int n = Cache.grafo_distancias.getNedges();
             file.write(n + "\n");
             for(int i = 0; i < Cache.grafo_distancias.getNvertices(); i++) {
@@ -187,30 +181,179 @@ public class IO {
         } catch (IOException e) {
             e.printStackTrace();
         }
-/*
-        // cache
+    }
+
+    /**
+     * escreve para o ficheiro binario
+     * @param nome_ficheiro nome do ficheiro para escrever
+     */
+    public static void readBinFile(String nome_ficheiro){
         try {
-            FileWriter file = new FileWriter(ficheiro);
-            for(Point2D pt: caches.keys()) {
-                Cache cache = caches.get(pt);
-                // String s = String.valueOf(5);
-                file.write(String.valueOf(cache.gps.x()) + "\n");
-                file.write(String.valueOf(cache.gps.y()) + "\n");
-                file.write("\n");
-                for(User utilizador: cache.logs.keys()) {
-                    Log log = cache.logs.get(utilizador);
-                    file.write(utilizador + "\n");
-                    file.write(log.getMensagem() + "\n");
-                }
-                file.write("\n");
-                for(Item item: cache.items){
-                    file.write(item.getDescricao() + "\n");
-                }
-                file.write("\n");
+            FileInputStream file = new FileInputStream(nome_ficheiro);
+            DataInputStream dos = new DataInputStream(new BufferedInputStream(file));
+            // utilizadores
+            int n = dos.readInt();
+            System.out.println("users n: " + n);
+            for(int i = 0; i < n; i++) {
+                String tipo = dos.readUTF();
+                System.out.println("tipo user: " + tipo);
+                int id = dos.readInt();
+                System.out.println("id user: " + id);
+                String nome = dos.readUTF();
+                System.out.println("nome user: " + nome);
+                User user;
+                if(tipo.equals("basic"))
+                    user = new UserBasic(id, nome);
+                else if(tipo.equals("premium"))
+                    user = new UserPremium(id, nome);
+                else
+                    user = new UserAdmin(id, nome);
+                User.utilizadores_por_id.put(id, user);
+                User.utilizadores_por_nome.put(nome, user);
             }
+
+            // caches
+            int nregioes = dos.readInt();
+            System.out.println("nregioes: " + nregioes);
+            for(int i = 0; i < nregioes; i++) {
+                String regiao = dos.readUTF();
+                int ncaches = dos.readInt();
+                System.out.println("regiao: " + regiao + " - ncaches: " + ncaches);
+                for(int j = 0; j < ncaches; j++) {
+                    String tipo = dos.readUTF();
+                    String id = dos.readUTF();
+                    double lat = dos.readDouble();
+                    double lon = dos.readDouble();
+                    System.out.println("cache tipo " + tipo + " id: " + id + " lat: " + lat + " lon: " + lon);
+                    Cache cache;
+                    if(tipo.equals("basic"))
+                        cache = new CacheBasic(id, regiao, lat, lon);
+                    else
+                        cache = new CachePremium(id, regiao, lat, lon);
+                    Cache.caches_por_id.put(id, cache);
+                    if(Cache.caches_por_regiao.contains(regiao))
+                        Cache.caches_por_regiao.get(regiao).add(cache);
+                    else {
+                        ArrayList<Cache> lista = new ArrayList<Cache>();
+                        lista.add(cache);
+                        Cache.caches_por_regiao.put(regiao, lista);
+                    }
+/*                    ArrayList<Item> items = cache.getItems();
+                    file.write("" + items.size());
+                    for(Item item: items) {
+                        file.write(", " + item.getDescricao());
+                    }
+                    file.write("\n");*/
+                }
+            }
+
+            // distancias
+            /*
+            int n = Cache.grafo_distancias.getNedges();
+            file.write(n + "\n");
+            for(int i = 0; i < Cache.grafo_distancias.getNvertices(); i++) {
+                for(DirectedEdge e: Cache.grafo_distancias.digraph().adj(i)) {
+                    String id1 = Cache.grafo_distancias.nameOf(e.from());
+                    String id2 = Cache.grafo_distancias.nameOf(e.to());
+                    file.write(id1 + ", " + id2 + ", " + e.weight() + ", " + ((int)Cache.grafo_tempos.getWeightBetween(id1, id2)) + "\n");                }
+            }
+
+            ArrayList<TravelBug> bugs = new ArrayList<>();
+            for(String id: Cache.caches_por_id.keys()) {
+                Cache cache = Cache.caches_por_id.get(id);
+                ArrayList<Item> items = cache.getItems();
+                for(Item item: items)
+                    if(item instanceof TravelBug)
+                        bugs.add((TravelBug) item);
+            }
+            file.write(bugs.size() + "\n");
+            for(TravelBug bug: bugs) {
+                file.write(bug.getDescricao() + ", " + bug.getCriador().getNome() + ", " + bug.getOrigem().getId() + ", " + bug.getAtual().getId() + "\n");
+            }
+*/
+
+            dos.close();
             file.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
+    }
+
+    /**
+     * escreve para o ficheiro binario
+     * @param nome_ficheiro nome do ficheiro para escrever
+     */
+    public static void writeBinFile(String nome_ficheiro){
+        try {
+            FileOutputStream file = new FileOutputStream(nome_ficheiro);
+            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(file));
+            // utilizadores
+            dos.writeInt(User.utilizadores_por_id.size());
+            for(int id: User.utilizadores_por_id.keys()){
+                User user = User.utilizadores_por_id.get(id);
+                if(user instanceof UserBasic)
+                    dos.writeUTF("basic");
+                else if(user instanceof UserPremium)
+                    dos.writeUTF("premium");
+                else
+                    dos.writeUTF("admin");
+                dos.writeInt(id);
+                dos.writeUTF(user.getNome());
+            }
+
+            // caches
+            dos.writeInt(Cache.caches_por_regiao.size());
+            for(String regiao: Cache.caches_por_regiao.keys()) {
+                ArrayList<Cache> caches = Cache.caches_por_regiao.get(regiao);
+                dos.writeUTF(regiao);
+                dos.writeInt(caches.size());
+                for(Cache cache: caches) {
+                    // geocache1, basic, 41.1720859, -8.6148178, 3, canudo, livro, oculos
+                    if(cache instanceof CacheBasic)
+                        dos.writeUTF("basic");
+                    else
+                        dos.writeUTF("premium");
+                    dos.writeUTF(cache.getId());
+                    dos.writeDouble(cache.getLat());
+                    dos.writeDouble(cache.getLon());
+/*                    ArrayList<Item> items = cache.getItems();
+                    file.write("" + items.size());
+                    for(Item item: items) {
+                        file.write(", " + item.getDescricao());
+                    }
+                    file.write("\n");*/
+                }
+            }
+
+            // distancias
+            /*
+            int n = Cache.grafo_distancias.getNedges();
+            file.write(n + "\n");
+            for(int i = 0; i < Cache.grafo_distancias.getNvertices(); i++) {
+                for(DirectedEdge e: Cache.grafo_distancias.digraph().adj(i)) {
+                    String id1 = Cache.grafo_distancias.nameOf(e.from());
+                    String id2 = Cache.grafo_distancias.nameOf(e.to());
+                    file.write(id1 + ", " + id2 + ", " + e.weight() + ", " + ((int)Cache.grafo_tempos.getWeightBetween(id1, id2)) + "\n");                }
+            }
+
+            ArrayList<TravelBug> bugs = new ArrayList<>();
+            for(String id: Cache.caches_por_id.keys()) {
+                Cache cache = Cache.caches_por_id.get(id);
+                ArrayList<Item> items = cache.getItems();
+                for(Item item: items)
+                    if(item instanceof TravelBug)
+                        bugs.add((TravelBug) item);
+            }
+            file.write(bugs.size() + "\n");
+            for(TravelBug bug: bugs) {
+                file.write(bug.getDescricao() + ", " + bug.getCriador().getNome() + ", " + bug.getOrigem().getId() + ", " + bug.getAtual().getId() + "\n");
+            }
+*/
+
+            dos.close();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

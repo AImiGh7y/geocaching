@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Utilizadores
+ */
+
 public abstract class User {
     public static RedBlackBST<String, User> utilizadores_por_nome = new RedBlackBST<>();
     public static RedBlackBST<Integer, User> utilizadores_por_id = new RedBlackBST<>();
