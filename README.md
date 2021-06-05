@@ -5,4 +5,4 @@ Projeto raelizado no âmbito da cadeira Linguagens de Programação 2, por Nuno 
 
 Professores dirigentes da cadeira de Linguagens de programação 2: Tiago André Costa (Prática) e Rui Silva Moreira (Teórica).
 
-Professores dirigentes da cadeira de Algoritmos e Estruturas de Dados 2: Miguel Caches (Prática) e  José Torres (Teórica). 
+Professores dirigentes da cadeira de Algoritmos e Estruturas de Dados 2: Miguel Chaves (Prática) e  José Torres (Teórica). 
