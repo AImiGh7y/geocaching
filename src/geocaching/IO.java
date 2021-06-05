@@ -193,14 +193,10 @@ public class IO {
             DataInputStream dos = new DataInputStream(new BufferedInputStream(file));
             // utilizadores
             int n = dos.readInt();
-            System.out.println("users n: " + n);
             for(int i = 0; i < n; i++) {
                 String tipo = dos.readUTF();
-                System.out.println("tipo user: " + tipo);
                 int id = dos.readInt();
-                System.out.println("id user: " + id);
                 String nome = dos.readUTF();
-                System.out.println("nome user: " + nome);
                 User user;
                 if(tipo.equals("basic"))
                     user = new UserBasic(id, nome);
@@ -214,11 +210,9 @@ public class IO {
 
             // caches
             int nregioes = dos.readInt();
-            System.out.println("nregioes: " + nregioes);
             for(int i = 0; i < nregioes; i++) {
                 String regiao = dos.readUTF();
                 int ncaches = dos.readInt();
-                System.out.println("regiao: " + regiao + " - ncaches: " + ncaches);
                 for(int j = 0; j < ncaches; j++) {
                     String tipo = dos.readUTF();
                     String id = dos.readUTF();
@@ -238,39 +232,40 @@ public class IO {
                         lista.add(cache);
                         Cache.caches_por_regiao.put(regiao, lista);
                     }
-/*                    ArrayList<Item> items = cache.getItems();
-                    file.write("" + items.size());
-                    for(Item item: items) {
-                        file.write(", " + item.getDescricao());
+
+                    int n_items = dos.readInt();
+                    for (int k = 0; k < n_items; k++) {
+                        cache.addItem(new Item(dos.readUTF()));
                     }
-                    file.write("\n");*/
                 }
             }
 
             // distancias
-            /*
-            int n = Cache.grafo_distancias.getNedges();
-            file.write(n + "\n");
-            for(int i = 0; i < Cache.grafo_distancias.getNvertices(); i++) {
-                for(DirectedEdge e: Cache.grafo_distancias.digraph().adj(i)) {
-                    String id1 = Cache.grafo_distancias.nameOf(e.from());
-                    String id2 = Cache.grafo_distancias.nameOf(e.to());
-                    file.write(id1 + ", " + id2 + ", " + e.weight() + ", " + ((int)Cache.grafo_tempos.getWeightBetween(id1, id2)) + "\n");                }
+            int n_distancias = dos.readInt();
+            for(int i = 0; i < n_distancias; i++) {
+                String cache1 = dos.readUTF();
+                String cache2 = dos.readUTF();
+                double distancia = dos.readDouble();
+                int tempo = dos.readInt();
+                Cache c1 = Cache.caches_por_id.get(cache1);
+                Cache c2 = Cache.caches_por_id.get(cache2);
+                Cache.grafo_distancias.addEdge(c1.getId(), c2.getId(), distancia);
+                Cache.grafo_tempos.addEdge(c1.getId(), c2.getId(), tempo);
             }
 
-            ArrayList<TravelBug> bugs = new ArrayList<>();
-            for(String id: Cache.caches_por_id.keys()) {
-                Cache cache = Cache.caches_por_id.get(id);
-                ArrayList<Item> items = cache.getItems();
-                for(Item item: items)
-                    if(item instanceof TravelBug)
-                        bugs.add((TravelBug) item);
+            // ler travel bugs
+            int n_bugs = dos.readInt();
+            for(int i = 0; i < n_bugs; i++) {
+                String descricao = dos.readUTF();
+                String username = dos.readUTF();
+                String cache1_id = dos.readUTF();
+                String cache2_id = dos.readUTF();
+                User utilizador = User.utilizadores_por_nome.get(username);
+                Cache cache1 = Cache.caches_por_id.get(cache1_id);
+                Cache cache2 = Cache.caches_por_id.get(cache2_id);
+                TravelBug bug = new TravelBug(descricao, utilizador, cache1, cache2);
+                cache2.addItem(bug);
             }
-            file.write(bugs.size() + "\n");
-            for(TravelBug bug: bugs) {
-                file.write(bug.getDescricao() + ", " + bug.getCriador().getNome() + ", " + bug.getOrigem().getId() + ", " + bug.getAtual().getId() + "\n");
-            }
-*/
 
             dos.close();
             file.close();
@@ -316,24 +311,25 @@ public class IO {
                     dos.writeUTF(cache.getId());
                     dos.writeDouble(cache.getLat());
                     dos.writeDouble(cache.getLon());
-/*                    ArrayList<Item> items = cache.getItems();
-                    file.write("" + items.size());
-                    for(Item item: items) {
-                        file.write(", " + item.getDescricao());
-                    }
-                    file.write("\n");*/
+                    ArrayList<Item> items = cache.getItems();
+                    dos.writeInt(items.size());
+                    for(Item item: items)
+                        dos.writeUTF(item.getDescricao());
                 }
             }
 
             // distancias
-            /*
             int n = Cache.grafo_distancias.getNedges();
-            file.write(n + "\n");
+            dos.writeInt(n);
             for(int i = 0; i < Cache.grafo_distancias.getNvertices(); i++) {
-                for(DirectedEdge e: Cache.grafo_distancias.digraph().adj(i)) {
+                for (DirectedEdge e : Cache.grafo_distancias.digraph().adj(i)) {
                     String id1 = Cache.grafo_distancias.nameOf(e.from());
                     String id2 = Cache.grafo_distancias.nameOf(e.to());
-                    file.write(id1 + ", " + id2 + ", " + e.weight() + ", " + ((int)Cache.grafo_tempos.getWeightBetween(id1, id2)) + "\n");                }
+                    dos.writeUTF(id1);
+                    dos.writeUTF(id2);
+                    dos.writeDouble(e.weight());
+                    dos.writeInt((int) Cache.grafo_tempos.getWeightBetween(id1, id2));
+                }
             }
 
             ArrayList<TravelBug> bugs = new ArrayList<>();
@@ -344,11 +340,13 @@ public class IO {
                     if(item instanceof TravelBug)
                         bugs.add((TravelBug) item);
             }
-            file.write(bugs.size() + "\n");
+            dos.writeInt(bugs.size());
             for(TravelBug bug: bugs) {
-                file.write(bug.getDescricao() + ", " + bug.getCriador().getNome() + ", " + bug.getOrigem().getId() + ", " + bug.getAtual().getId() + "\n");
+                dos.writeUTF(bug.getDescricao());
+                dos.writeUTF(bug.getCriador().getNome());
+                dos.writeUTF(bug.getOrigem().getId());
+                dos.writeUTF(bug.getAtual().getId());
             }
-*/
 
             dos.close();
             file.close();

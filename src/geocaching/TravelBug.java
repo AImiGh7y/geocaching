@@ -21,7 +21,6 @@ public class TravelBug extends Item {
         historico.add(cache);
         atual = cache;
     }
-
     public User getCriador() {
         return criador;
     }

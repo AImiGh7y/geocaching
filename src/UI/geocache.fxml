@@ -37,12 +37,12 @@
                                 <MenuItem mnemonicParsing="false" onAction="#onSaveText" text="Save Text File" />
                             </items>
                         </Menu>
-                        <MenuItem mnemonicParsing="false" text="Exit" />
+                        <MenuItem mnemonicParsing="false" onAction="#onExitMenu" text="Exit" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
+                        <MenuItem mnemonicParsing="false" onAction="#onAboutMenu" text="About" />
                     </items>
                 </Menu>
             </menus>
@@ -73,8 +73,17 @@
                                         <HBox prefHeight="0.0" prefWidth="154.0" spacing="8.0">
                                             <children>
                                                 <TextField fx:id="userNameField" promptText="Nome" />
+                                                <ComboBox fx:id="userTypeCombo" prefWidth="150.0" promptText="Type">
+                                                    <items>
+                                                        <FXCollections fx:factory="observableArrayList">
+                                                            <String fx:id="basic" fx:value="basic" />
+                                                            <String fx:id="premium" fx:value="premium" />
+                                                            <String fx:id="admin" fx:value="admin" />
+                                                        </FXCollections>
+                                                    </items>
+                                                </ComboBox>
                                                 <Button mnemonicParsing="false" onAction="#onUserAdd" text="Add" />
-                                    <Button mnemonicParsing="false" onAction="#onUserRemove" text="Remove" />
+                                                <Button mnemonicParsing="false" onAction="#onUserRemove" text="Remove" />
                                             </children>
                                         </HBox>
                                     </children>
@@ -103,9 +112,9 @@
                                     <ComboBox fx:id="cacheRegionCombo" prefWidth="150.0" promptText="Região">
                                         <items>
                                             <FXCollections fx:factory="observableArrayList">
-                                                <String fx:id="norte" fx:value="Norte" />
-                                                <String fx:id="centro" fx:value="Centro" />
-                                                <String fx:id="sul" fx:value="Sul" />
+                                                <String fx:id="norte" fx:value="norte" />
+                                                <String fx:id="centro" fx:value="centro" />
+                                                <String fx:id="sul" fx:value="sul" />
                                             </FXCollections>
                                         </items>
                                     </ComboBox>
@@ -122,6 +131,29 @@
                         </AnchorPane>
                     </content>
                 </Tab>
+            <Tab text="Search">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox fillWidth="false" layoutX="116.0" layoutY="44.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <TextField fx:id="cache1Field" promptText="Donde cache" />
+                              <TextField fx:id="cache2Field" promptText="Para cache" />
+                              <ComboBox fx:id="searchCombo" prefWidth="150.0">
+                                  <items>
+                                      <FXCollections fx:factory="observableArrayList">
+                                          <String fx:id="time" fx:value="time" />
+                                          <String fx:id="distance" fx:value="distance" />
+                                      </FXCollections>
+                                  </items>
+                              </ComboBox>
+                              <Button mnemonicParsing="false" onAction="#onSearch" text="Pesquisa" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
             </tabs>
         </TabPane>
     </children>

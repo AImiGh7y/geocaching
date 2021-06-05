@@ -300,6 +300,45 @@ public class Main {
     }
 
     /**
+     * Caches percorridas de acordo com o problema do caixeiro viajante (maximo sem repeticoes).
+     * @param grafo Grafo a percorrer
+     * @param origem Indice do no de origem
+     * @param atual Indice do no atual
+     * @param visitados Lista dos visitados anteriormente
+     * @param tempo Tempo desejado para o metodo
+     * @param start_time Tempo antes de executar a funcao
+     * @return Lista dos nos percorridos
+     */
+    private static ArrayList<Integer> caixeiro(SymbolDigraphLP grafo, int origem, int atual, ArrayList<Integer> visitados, int tempo, long start_time) {
+        if(origem == atual && visitados.size() > 0) {
+            return visitados;
+        }
+
+        if((System.currentTimeMillis() - start_time) / 1000 >= tempo)
+            return null;
+
+        ArrayList<Integer> visitados2 = (ArrayList<Integer>)visitados.clone();
+        visitados2.add(atual);
+
+        ArrayList<Integer> maiorPercorreu = null;
+
+        for(DirectedEdge e: grafo.digraph().adj(atual)) {
+            int prox = e.to();
+            if(!visitados.contains(prox)) {
+                ArrayList<Integer> percorreu = caixeiro(grafo, origem, prox, visitados2, tempo, start_time);
+                percorreu.add(atual);
+                if(maiorPercorreu == null || percorreu.size() > maiorPercorreu.size())
+                    maiorPercorreu = percorreu;
+            }
+        }
+
+        if(maiorPercorreu == null)
+            maiorPercorreu = new ArrayList<Integer>();
+
+        return maiorPercorreu;
+    }
+
+    /**
      * Menu das caches (adicionar remover listar etc)
      * @param scanner input para o menu
      */
@@ -311,6 +350,7 @@ public class Main {
             System.out.println("1: adicionar cache");
             System.out.println("2: listar caches");
             System.out.println("3: caminho minimo");  // R14
+            System.out.println("4: caixeiro");  // R18
             System.out.println("0: Voltar atras");
             opcao = scanner.nextInt();
             switch(opcao) {
@@ -402,6 +442,32 @@ public class Main {
                     else {
                         System.out.println("Error: cache does not exist.");
                     }
+                    break;
+                }
+                case 4: {
+                    System.out.println("Onde comecar?");
+                    String origem = scanner.next();
+                    System.out.println("Quanto tempo (em segundos)?");
+                    int tempo = scanner.nextInt();
+                    long start_time = System.currentTimeMillis();
+
+                    SymbolDigraphLP grafo = Cache.grafo_tempos;
+                    System.out.println("comecar em '" + origem + "'");
+                    if(!Cache.caches_por_id.contains(origem)) {
+                        System.out.println("Cache nao existe");
+                        break;
+                    }
+                    ArrayList<Integer> maiorPercorrido = caixeiro(grafo, grafo.indexOf(origem), grafo.indexOf(origem), new ArrayList<Integer>(), tempo, start_time);
+                    if(maiorPercorrido == null) {
+                        System.out.println("Erro de tempo");
+                        break;
+                    }
+                    System.out.println("Maior percorrido:");
+                    System.out.println(origem);
+                    for(int i: maiorPercorrido)
+                        System.out.println("-> " + grafo.nameOf(i));
+                    System.out.println();
+                    break;
                 }
                 case 0:
                     break;

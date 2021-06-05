@@ -1,7 +1,9 @@
 package UI;
 
+import edu.princeton.cs.algs4.DijkstraSP;
 import edu.princeton.cs.algs4.DirectedEdge;
 import geocaching.*;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -54,6 +56,9 @@ public class Controller {
     private ComboBox cacheRegionCombo;
 
     @FXML
+    private ComboBox userTypeCombo;
+
+    @FXML
     private TableColumn<Cache, String> cacheIdCol;
 
     @FXML
@@ -65,6 +70,12 @@ public class Controller {
 
     @FXML
     private TableColumn<Cache, String> cacheLonCol;
+
+    @FXML
+    private TextField cache1Field, cache2Field;
+
+    @FXML
+    private ComboBox searchCombo;
 
     @FXML
     public void initialize() {
@@ -104,12 +115,15 @@ public class Controller {
         for(int i = 0; i < grafo.getNvertices(); i++) {
             int x = (int) (Math.random() * 650);
             int y = (int) (Math.random() * 400);
-            int radius = 10;
+            int radius = 25;
             xx[i] = x;
             yy[i] = y;
 
             Circle c = new Circle(x, y, radius);
-            c.setFill(Color.WHITE);
+            if(Cache.caches_por_id.get(grafo.nameOf(i)) instanceof CachePremium)
+                c.setFill(Color.GOLD);
+            else
+                c.setFill(Color.CYAN);
 
             StackPane stack = new StackPane();
             stack.setLayoutX(x - radius);
@@ -154,9 +168,16 @@ public class Controller {
     @FXML
     void onUserAdd(ActionEvent event) {
         String name = userNameField.getText();
+        String type = (String) userTypeCombo.getSelectionModel().getSelectedItem();
 
         if(name.length() > 0) {
-            User user = new UserBasic(name);
+            User user;
+            if(type.equals("basic"))
+                user = new UserBasic(name);
+            else if(type.equals("premium"))
+                user = new UserPremium(name);
+            else
+                user = new UserAdmin(name);
             User.utilizadores_por_nome.put(name, user);
             User.utilizadores_por_id.put(user.getId(), user);
 
@@ -256,6 +277,55 @@ public class Controller {
         File selectedFile = fileChooser.showSaveDialog(null);
         if(selectedFile != null) {
             IO.writeBinFile(selectedFile.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    void onAboutMenu(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Developed by Nuno e Pedro", ButtonType.OK);
+        alert.setHeaderText("About");
+        alert.setTitle("About");
+        alert.showAndWait();
+    }
+
+    @FXML
+    void onExitMenu(ActionEvent event) {
+        Platform.exit();
+        System.exit(0);
+    }
+
+    @FXML
+    void onSearch(ActionEvent event) {
+/*
+        private TextField cache1Field, cache2Field;
+        private ComboBox searchCombo;
+*/
+        String id1 = cache1Field.getText();
+        String id2 = cache2Field.getText();
+        if(Cache.caches_por_id.contains(id1) && Cache.caches_por_id.contains(id2)) {
+            String opcao = (String)searchCombo.getSelectionModel().getSelectedItem();
+            SymbolDigraphLP grafo;
+            if(opcao.equals("time"))
+                grafo = Cache.grafo_tempos;
+            else
+                grafo = Cache.grafo_distancias;
+            int i1 = grafo.indexOf(id1);
+            int i2 = grafo.indexOf(id2);
+            DijkstraSP dijkstra = new DijkstraSP(grafo.digraph(), i1);
+            if(dijkstra.hasPathTo(i2)) {
+                double custoMin = dijkstra.distTo(i2);
+                String text = "Custo minimo = " + custoMin + "\n";
+                text += id1;
+                for(DirectedEdge e: dijkstra.pathTo(i2)) {
+                    text += " -> " + grafo.nameOf(e.to());
+                }
+                Alert msg = new Alert(Alert.AlertType.INFORMATION, text, ButtonType.OK);
+                msg.showAndWait();
+            }
+        }
+        else {
+            Alert error = new Alert(Alert.AlertType.ERROR, "Cache nao existe", ButtonType.OK);
+            error.showAndWait();
         }
     }
 }
