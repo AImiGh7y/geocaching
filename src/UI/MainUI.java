@@ -16,7 +16,7 @@ public class MainUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Working Directory = C:\Users\nunou\IdeaProjects\geocaching
+        // diretorio = C:\Users\nunou\IdeaProjects\geocaching
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource("geocache.fxml"));

@@ -8,4 +8,6 @@ public class CachePremium extends Cache {
     public String toString() {
         return getId() + " - " + getRegiao() + " - " + getLat() + "," + getLon() + " [premium]";
     }
+
+    public String getTipo() { return "Premium"; }
 }

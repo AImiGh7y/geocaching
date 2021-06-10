@@ -17,8 +17,8 @@ public class Testes {
         readFile("temp.txt");
         System.out.println("Test tamanho cache: " + caches.size() + " tem que ser 2");
          */
-        System.out.println("Cache tem ponto 0.5,2.8: " + (Cache.caches_por_id.get("cache1") != null) + " tem que ser true");
-        System.out.println("Cache tem ponto 6.2,3.8: " + (Cache.caches_por_id.get("cache3") != null) + " tem que ser false");
+        System.out.println("Cache 1: " + (Cache.caches_por_id.get("cache1") != null) + " tem que ser true");
+        System.out.println("Cache 3: " + (Cache.caches_por_id.get("cache3") != null) + " tem que ser false");
     }
 
     public static void testarVisitas() {
@@ -26,6 +26,7 @@ public class Testes {
         User joana = User.utilizadores_por_nome.get("Joana");
         Cache geocache1 = Cache.caches_por_id.get("geocache1");
         geocache1.visitadaPor(joana, "abc");
+        // lista de caches visitadas pela joana
         ArrayList<Cache> caches_visitadas_por_joana = new ArrayList<>();
         for(String id: Cache.caches_por_id.keys()) {
             Cache cache = Cache.caches_por_id.get(id);

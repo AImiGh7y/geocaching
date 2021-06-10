@@ -101,6 +101,7 @@
                                         <TableView fx:id="cachesTable" prefHeight="300.0">
                                             <columns>
                                                 <TableColumn fx:id="cacheIdCol" prefWidth="75.0" text="Id" />
+                                    <TableColumn fx:id="cacheTipoCol" prefWidth="75.0" text="Tipo" />
                                                 <TableColumn fx:id="cacheRegionCol" prefWidth="75.0" text="Região" />
                                     <TableColumn fx:id="cacheLatCol" prefWidth="75.0" text="Lat" />
                                     <TableColumn fx:id="cacheLonCol" prefWidth="75.0" text="Lon" />
@@ -137,9 +138,9 @@
                      <children>
                         <VBox fillWidth="false" layoutX="116.0" layoutY="44.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <TextField fx:id="cache1Field" promptText="Donde cache" />
+                              <TextField fx:id="cache1Field" promptText="De que cache" />
                               <TextField fx:id="cache2Field" promptText="Para cache" />
-                              <ComboBox fx:id="searchCombo" prefWidth="150.0">
+                              <ComboBox fx:id="searchCombo" prefWidth="150.0" promptText="Tipo de grafo">
                                   <items>
                                       <FXCollections fx:factory="observableArrayList">
                                           <String fx:id="time" fx:value="time" />
@@ -148,6 +149,29 @@
                                   </items>
                               </ComboBox>
                               <Button mnemonicParsing="false" onAction="#onSearch" text="Pesquisa" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Caixeiro-Viajante">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox fillWidth="false" layoutX="116.0" layoutY="44.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <TextField fx:id="cachePartidaField" promptText="Cache inicial" />
+                              <ComboBox fx:id="caixeiroCombo" prefWidth="150.0" promptText="Tipo de grafo">
+                                  <items>
+                                      <FXCollections fx:factory="observableArrayList">
+                                          <String fx:id="time" fx:value="time" />
+                                          <String fx:id="distance" fx:value="distance" />
+                                      </FXCollections>
+                                  </items>
+                              </ComboBox>
+                              <TextField fx:id="caixeiroTempoField" promptText="Tempo máximo" />
+                              <Button mnemonicParsing="false" onAction="#onPartida" text="Pesquisa" />
                            </children>
                         </VBox>
                      </children>

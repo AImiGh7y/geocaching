@@ -19,7 +19,6 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class Controller {
     @FXML
@@ -64,6 +63,8 @@ public class Controller {
     @FXML
     private TableColumn<Cache, String> cacheRegionCol;
 
+    @FXML
+    private TableColumn<Cache, String> cacheTipoCol;
 
     @FXML
     private TableColumn<Cache, String> cacheLatCol;
@@ -72,10 +73,10 @@ public class Controller {
     private TableColumn<Cache, String> cacheLonCol;
 
     @FXML
-    private TextField cache1Field, cache2Field;
+    private TextField cache1Field, cache2Field, cachePartidaField, caixeiroTempoField;
 
     @FXML
-    private ComboBox searchCombo;
+    private ComboBox searchCombo, caixeiroCombo;
 
     @FXML
     public void initialize() {
@@ -88,9 +89,10 @@ public class Controller {
         userNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
         userTypeCol.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         userTypeCol.setCellFactory(TextFieldTableCell.forTableColumn());
-
         cacheIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         cacheIdCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        cacheTipoCol.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+        cacheTipoCol.setCellFactory(TextFieldTableCell.forTableColumn());
         cacheRegionCol.setCellValueFactory(new PropertyValueFactory<>("regiao"));
         cacheRegionCol.setCellFactory(TextFieldTableCell.forTableColumn());
         cacheLatCol.setCellValueFactory(new PropertyValueFactory<>("latstr"));
@@ -112,6 +114,7 @@ public class Controller {
         int xx[] = new int[grafo.getNvertices()];
         int yy[] = new int[grafo.getNvertices()];
 
+        // adicionar vertices
         for(int i = 0; i < grafo.getNvertices(); i++) {
             int x = (int) (Math.random() * 650);
             int y = (int) (Math.random() * 400);
@@ -123,7 +126,7 @@ public class Controller {
             if(Cache.caches_por_id.get(grafo.nameOf(i)) instanceof CachePremium)
                 c.setFill(Color.GOLD);
             else
-                c.setFill(Color.CYAN);
+                c.setFill(Color.LIGHTSKYBLUE);
 
             StackPane stack = new StackPane();
             stack.setLayoutX(x - radius);
@@ -133,6 +136,7 @@ public class Controller {
             graphGroup.getChildren().add(stack);
         }
 
+        // adicionar aresta
         for(int i = 0; i < grafo.getNvertices(); i++) {
             for(DirectedEdge e: grafo.digraph().adj(i)) {
                 Line line = new Line(xx[e.from()], yy[e.from()], xx[e.to()], yy[e.to()]);
@@ -204,6 +208,7 @@ public class Controller {
     void onCacheAdd(ActionEvent event) {
         Cache cache;
         String id = cacheIdField.getText();
+
         String region = (String) cacheRegionCombo.getSelectionModel().getSelectedItem();
         if(cachePremiumCheck.isSelected())
             cache = new CachePremium(id, region, cacheLatField.getValue(), cacheLonField.getValue());
@@ -217,6 +222,8 @@ public class Controller {
             lista.add(cache);
             Cache.caches_por_regiao.put(region, lista);
         }
+        Cache.grafo_distancias.addVertex(cache.getId());
+        Cache.grafo_tempos.addVertex(cache.getId());
 
         updateCachesTable();
         updateGraphGroup();
@@ -282,7 +289,7 @@ public class Controller {
 
     @FXML
     void onAboutMenu(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Developed by Nuno e Pedro", ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Developed by Nuno e Pedro Industries", ButtonType.OK);
         alert.setHeaderText("About");
         alert.setTitle("About");
         alert.showAndWait();
@@ -327,5 +334,43 @@ public class Controller {
             Alert error = new Alert(Alert.AlertType.ERROR, "Cache nao existe", ButtonType.OK);
             error.showAndWait();
         }
+    }
+
+    @FXML
+    void onPartida(ActionEvent event){
+        String partida = cachePartidaField.getText();
+        if(Cache.caches_por_id.contains(partida)) {
+            SymbolDigraphLP grafo;
+            if(((String)caixeiroCombo.getSelectionModel().getSelectedItem()).equals("time"))
+                grafo = Cache.grafo_tempos;
+            else
+                grafo = Cache.grafo_distancias;
+
+            int origem = grafo.indexOf(partida);
+            String tempoStr = caixeiroTempoField.getText();
+            int tempoMax = Integer.MAX_VALUE;
+            if(tempoStr.length() > 0)
+                tempoMax = Integer.valueOf(tempoStr);
+            ArrayList<Integer> caminho = Cache.caixeiro(grafo, origem, origem, new ArrayList<Integer>(), tempoMax, System.currentTimeMillis());
+
+            String texto;
+            if(caminho == null) {
+                texto = "Nao encontrou caminho";
+            }
+            else {
+                texto = "";
+                boolean first = true;
+                for (int v : caminho) {
+                    if (!first)
+                        texto += " -> ";
+                    texto += grafo.nameOf(v);
+                    first = false;
+                }
+            }
+
+            Alert mensagem = new Alert(Alert.AlertType.INFORMATION, texto, ButtonType.OK);
+            mensagem.showAndWait();
+        }
+
     }
 }

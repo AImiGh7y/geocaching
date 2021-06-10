@@ -2,38 +2,11 @@ package geocaching;
 
 import edu.princeton.cs.algs4.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
 public class Main {
-    public static User pedirUtilizador(Scanner scanner) {
-        User utilizador = null;
-        do {
-            System.out.print("Quem vistou? ");
-            String nome = scanner.next();
-            if (User.utilizadores_por_nome.contains(nome))
-                utilizador = User.utilizadores_por_nome.get(nome);
-            else
-                System.out.println("Utilizador nao existe");
-        } while (utilizador == null);
-        return utilizador;
-    }
-
-    public static Cache pedirCache(Scanner scanner) {
-        Cache cache = null;
-        do {
-            System.out.print("Qual o nome da cache? ");
-            String id = scanner.next();
-            if (Cache.caches_por_id.contains(id))
-                cache = Cache.caches_por_id.get(id);
-            else
-                System.out.println("Cache nao existe");
-        } while (cache == null);
-        return cache;
-    }
-
     /**
      * menu do utilizador (adicionar remover editar etc)
      * @param scanner input para o menu
@@ -87,7 +60,8 @@ public class Main {
                             Cache cache = Cache.caches_por_id.get(id);
                             cache.removerVisita(utilizador);
                         }
-                    } else
+                    }
+                    else
                         System.out.println("Utilizador " + nome + " nao existe");
                     break;
                 }
@@ -133,7 +107,7 @@ public class Main {
             opcao = scanner.nextInt();
             switch(opcao) {
                 case 1: {  // Todas as caches visitadas por um utilizador
-                    User utilizador = pedirUtilizador(scanner);
+                    User utilizador = Input.pedirUtilizador(scanner);
                     int nvisitas = 0;
                     // global
                     System.out.println("* Visitadas globais:");
@@ -163,7 +137,7 @@ public class Main {
                     break;
                 }
                 case 2: {  // Todas as caches visitadas por um utilizador
-                    User utilizador = pedirUtilizador(scanner);
+                    User utilizador = Input.pedirUtilizador(scanner);
                     int nvisitas = 0;
                     // global
                     System.out.println("* Caches nao-visitadas globais:");
@@ -193,7 +167,7 @@ public class Main {
                     break;
                 }
                 case 3: {  // Todas as caches visitadas por um utilizador
-                    Cache cache = pedirCache(scanner);
+                    Cache cache = Input.pedirCache(scanner);
                     int nutilizadores = 0;
                     for(int id: User.utilizadores_por_id.keys()){
                         User utilizador = User.utilizadores_por_id.get(id);
@@ -208,10 +182,10 @@ public class Main {
                     break;
                 }
                 case 4: {
-                    for(String id: Cache.caches_por_id.keys()){
+                    for(String id: Cache.caches_por_id.keys()) {
                         Cache cache = Cache.caches_por_id.get(id);
-                        if(cache instanceof CachePremium){
-                            if(cache.getItems().size() >= 1){
+                        if(cache instanceof CachePremium) {
+                            if(cache.getItems().size() >= 1) {
                                 System.out.println(cache + " tem " + cache.getItems().size() + " items");
                             }
                         }
@@ -226,7 +200,7 @@ public class Main {
                         System.out.println("Dia invalido");
                         continue;
                     }
-                    // symbol table que associa nvisitas -> lista de utilizadores
+                    // 1. symbol table que associa nvisitas -> lista de utilizadores
                     RedBlackBST<Integer, ArrayList<User>> visitas = new RedBlackBST<>();
                     for(int user_id: User.utilizadores_por_id.keys()){
                         // quantas caches, o utilizador visitou
@@ -257,10 +231,12 @@ public class Main {
                             }
                         }
                     }
-                    // imprimir top-5
+                    // 2. ordenar por numero de visitas
                     ArrayList<Integer> visitas_ordenadas = new ArrayList<>();
                     for(Integer nvisitas: visitas.keys())
-                        visitas_ordenadas.add(0, nvisitas);
+                        visitas_ordenadas.add(nvisitas);
+                    Collections.sort(visitas_ordenadas, Collections.reverseOrder());
+                    // 3. imprimir as primeiros 5 (top-5)
                     int i = 0;
                     for(Integer nvisitas: visitas_ordenadas) {
                         for(User user: visitas.get(nvisitas)) {
@@ -289,6 +265,8 @@ public class Main {
                         for(Cache cache: maior_bug.getHistorico())
                             System.out.println("- " + cache);
                     }
+                    else
+                        System.out.println("Nao existem travel bugs");
                     break;
                 }
                 case 0: break;
@@ -297,45 +275,6 @@ public class Main {
                     break;
             }
         } while(opcao != 0);
-    }
-
-    /**
-     * Caches percorridas de acordo com o problema do caixeiro viajante (maximo sem repeticoes).
-     * @param grafo Grafo a percorrer
-     * @param origem Indice do no de origem
-     * @param atual Indice do no atual
-     * @param visitados Lista dos visitados anteriormente
-     * @param tempo Tempo desejado para o metodo
-     * @param start_time Tempo antes de executar a funcao
-     * @return Lista dos nos percorridos
-     */
-    private static ArrayList<Integer> caixeiro(SymbolDigraphLP grafo, int origem, int atual, ArrayList<Integer> visitados, int tempo, long start_time) {
-        if(origem == atual && visitados.size() > 0) {
-            return visitados;
-        }
-
-        if((System.currentTimeMillis() - start_time) / 1000 >= tempo)
-            return null;
-
-        ArrayList<Integer> visitados2 = (ArrayList<Integer>)visitados.clone();
-        visitados2.add(atual);
-
-        ArrayList<Integer> maiorPercorreu = null;
-
-        for(DirectedEdge e: grafo.digraph().adj(atual)) {
-            int prox = e.to();
-            if(!visitados.contains(prox)) {
-                ArrayList<Integer> percorreu = caixeiro(grafo, origem, prox, visitados2, tempo, start_time);
-                percorreu.add(atual);
-                if(maiorPercorreu == null || percorreu.size() > maiorPercorreu.size())
-                    maiorPercorreu = percorreu;
-            }
-        }
-
-        if(maiorPercorreu == null)
-            maiorPercorreu = new ArrayList<Integer>();
-
-        return maiorPercorreu;
     }
 
     /**
@@ -457,13 +396,12 @@ public class Main {
                         System.out.println("Cache nao existe");
                         break;
                     }
-                    ArrayList<Integer> maiorPercorrido = caixeiro(grafo, grafo.indexOf(origem), grafo.indexOf(origem), new ArrayList<Integer>(), tempo, start_time);
+                    ArrayList<Integer> maiorPercorrido = Cache.caixeiro(grafo, grafo.indexOf(origem), grafo.indexOf(origem), new ArrayList<Integer>(), tempo, start_time);
                     if(maiorPercorrido == null) {
-                        System.out.println("Erro de tempo");
+                        System.out.println("Nao encontrado maior percurso");
                         break;
                     }
                     System.out.println("Maior percorrido:");
-                    System.out.println(origem);
                     for(int i: maiorPercorrido)
                         System.out.println("-> " + grafo.nameOf(i));
                     System.out.println();
@@ -507,8 +445,8 @@ public class Main {
                     menuCache(scanner);
                     break;
                 case 3: {  // visitado por
-                    User utilizador = pedirUtilizador(scanner);
-                    Cache cache = pedirCache(scanner);
+                    User utilizador = Input.pedirUtilizador(scanner);
+                    Cache cache = Input.pedirCache(scanner);
 
                     // "O Manuel sendo um Basic user, não devia ter acesso à geocache16."
                     if(utilizador instanceof UserBasic && cache instanceof CachePremium) {
@@ -528,14 +466,19 @@ public class Main {
                         bug_cache = cache.getTravelBug();
                         bug_utilizador = utilizador.getTravelBug();
                         if (bug_utilizador == null) {
+                            // criar travel bug, caso utilizador ja nao tenha um
                             System.out.println("Nome do travel bug?");
                             String nome = scanner.next();
                             bug_utilizador = new TravelBug(nome, utilizador, cache, cache);
                         }
                         if(bug_cache != null) {
+                            // se cache tiver travel bug => passa para utilizador
                             utilizador.setTravelBug(bug_cache);
                             cache.removeItem(bug_cache);
                         }
+                        else
+                            utilizador.setTravelBug(null);
+                        // colocamos o travel bug do utilizador na cache
                         cache.addItem(bug_utilizador);
                         bug_utilizador.setCache(cache);
                     }
@@ -546,6 +489,7 @@ public class Main {
                     break;
                 case 8: {  // ler ficheiro
                     IO.readFile("input.txt");
+                    System.out.println("Reading complete!");
                     break;
                 }
                 case 9: {  // gravar ficheiro

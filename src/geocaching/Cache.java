@@ -1,12 +1,6 @@
 package geocaching;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Scanner;
 
 import edu.princeton.cs.algs4.*;
 import edu.princeton.cs.algs4.SequentialSearchST;
@@ -19,10 +13,10 @@ public abstract class Cache {
     public static RedBlackBST<String, ArrayList<Cache>> caches_por_regiao = new RedBlackBST<>();
     public static SymbolDigraphLP grafo_tempos = new SymbolDigraphLP();
     public static SymbolDigraphLP grafo_distancias = new SymbolDigraphLP();
-    String id, regiao;
-    public Point2D gps;
-    public SequentialSearchST<User, Log> logs;
-    public ArrayList<Item> items;
+    private String id, regiao;
+    private Point2D gps;
+    private SequentialSearchST<User, Log> logs;
+    private ArrayList<Item> items;
 
     public Cache(String id, String regiao, double lat, double lon) {
         this.id = id;
@@ -41,9 +35,8 @@ public abstract class Cache {
     }
 
     /**
-     * Esta funcao espefici...
      * @param utilizador Utilizador que visitou a cache
-     * @param mensagem Mensagem deixada pelo utiulizador
+     * @param mensagem Mensagem deixada pelo utilizador
      */
     public void visitadaPor(User utilizador, String mensagem) {
         System.out.println("cache visitada por " + utilizador.getNome() + " - " + mensagem);
@@ -99,4 +92,64 @@ public abstract class Cache {
     public String getLonstr() { return String.valueOf(gps.y()); }
     public String getId() { return id; }
     public String getRegiao() { return regiao; }
+    public abstract String getTipo();
+
+
+    /**
+     * Caches percorridas de acordo com o problema do caixeiro viajante.
+     * Retorna caminho mais comprido da origem ate voltar a origem, sem repeticoes.
+     * @param grafo Grafo a percorrer
+     * @param origem Indice do no de origem
+     * @param atual Indice do no atual
+     * @param visitados Lista dos visitados anteriormente
+     * @param tempoMax Tempo desejado para o metodo
+     * @param start_time Tempo antes de executar a funcao
+     * @return Lista dos nos percorridos
+     */
+
+    public static ArrayList<Integer> caixeiro(SymbolDigraphLP grafo, int origem, int atual, ArrayList<Integer> visitados, int tempoMax, long start_time) {
+        // Retorna caminho mais comprido da origem ate voltar a origem, sem repeticoes.
+/*        System.out.print("atual: " + grafo.nameOf(atual) + " visitados:");
+        for (Integer i : visitados)
+            System.out.print(" -> " + grafo.nameOf(i));
+        System.out.println();*/
+
+        if(atual == origem && visitados.size() > 0) {
+            // chegamos ao destino, caminho mais longo = proprio
+            ArrayList<Integer> lista = new ArrayList<>();
+            lista.add(atual);
+            //System.out.println("voltou a origem");
+            return lista;
+        }
+        if(visitados.contains(atual)) {
+            // nao permite visitar duas vezes
+            //System.out.println("ja visitou");
+            return null;
+        }
+
+        long dt = (System.currentTimeMillis() - start_time) / 1000;
+        if(dt >= tempoMax)  // condicao de paragem de tempo
+            return null;
+
+        ArrayList<Integer> visitados2 = (ArrayList<Integer>)visitados.clone();
+        visitados2.add(atual);
+
+        ArrayList<Integer> maiorPercurso = null;
+        for(DirectedEdge e: grafo.digraph().adj(atual)) {
+            int prox = e.to();
+            ArrayList<Integer> percurso = caixeiro(grafo, origem, prox, visitados2, tempoMax, start_time);
+            if(percurso != null) {
+                percurso.add(0, atual);
+                if(maiorPercurso == null || percurso.size() > maiorPercurso.size())
+                    maiorPercurso = percurso;
+            }
+        }
+/*        if(maiorPercurso != null) {
+            System.out.print("atual: " + grafo.nameOf(atual) + " encontrou maior percurso:");
+            for (Integer i : maiorPercurso)
+                System.out.print(" -> " + grafo.nameOf(i));
+            System.out.println();
+        }*/
+        return maiorPercurso;
+    }
 }

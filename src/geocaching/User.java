@@ -2,12 +2,7 @@ package geocaching;
 
 import edu.princeton.cs.algs4.RedBlackBST;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Utilizadores
@@ -16,7 +11,6 @@ import java.util.Scanner;
 public abstract class User {
     public static RedBlackBST<String, User> utilizadores_por_nome = new RedBlackBST<>();
     public static RedBlackBST<Integer, User> utilizadores_por_id = new RedBlackBST<>();
-
     private int id;
     private String nome;
     private ArrayList<Cache> visitadas;

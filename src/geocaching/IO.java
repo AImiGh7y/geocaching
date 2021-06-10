@@ -73,6 +73,8 @@ public class IO {
                         lista.add(cache);
                         Cache.caches_por_regiao.put(nome_regiao, lista);
                     }
+                    Cache.grafo_distancias.addVertex(campos[0]);
+                    Cache.grafo_tempos.addVertex(campos[0]);
                 }
             }
 

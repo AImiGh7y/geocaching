@@ -27,7 +27,7 @@ geocache15, basic, 38.7756417, -9.1325313, 1, bilhetes_aviao
 geocache16, premium, 38.7527152, -9.1869627, 0
 geocache17, basic, 38.7612341, -9.1639843, 0
 geocache18, basic, 38.9369329, -9.3290594, 0
-50
+51
 geocache1, geocache2, 5.2, 60
 geocache1, geocache3, 8.2, 102
 geocache1, geocache4, 6.2, 70
@@ -78,6 +78,7 @@ geocache16, geocache17, 1.2, 22
 geocache16, geocache18, 2.1, 35
 geocache17, geocache18, 3.8, 44
 geocache7, geocache15, 330, 45
+geocache18, geocache1, 100, 50
 3
 travelbug1, Maria, geocache1, geocache15
 travelbug2, Pedro, geocache2, geocache17
